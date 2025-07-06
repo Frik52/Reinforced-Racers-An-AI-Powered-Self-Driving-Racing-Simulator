@@ -1,1 +1,1 @@
-This folder contains support files and earlier version of the game.
+This folder contains support files.
