@@ -76,6 +76,13 @@ class Car:
         except IndexError:
             self.crashed = True  # Off-screen = crash
 
+    def reset(self):
+        self.x = 400
+        self.y = 160
+        self.angle = 0
+        self.speed = 0
+        self.crashed = False
+
 def draw_track(surface):
     surface.fill(GREEN)
 
@@ -110,6 +117,9 @@ def main():
             font = pygame.font.SysFont(None, 48)
             text = font.render("Crashed!", True, BLACK)
             WIN.blit(text, (WIDTH // 2 - 80, HEIGHT // 2 - 20))
+            pygame.display.update()
+            pygame.time.delay(1000)
+            car.reset()
 
         pygame.display.update()
 
