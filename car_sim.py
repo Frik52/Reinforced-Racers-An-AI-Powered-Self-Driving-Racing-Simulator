@@ -76,39 +76,39 @@ class Car:
     def ai_control(self):
         if self.crashed or len(self.sensor_distances) < 9:
             return
-
-        L2 = self.sensor_distances[0]
-        L1 = self.sensor_distances[1]
-        FL = self.sensor_distances[2]
-        F  = self.sensor_distances[4]
-        FR = self.sensor_distances[6]
-        R1 = self.sensor_distances[7]
-        R2 = self.sensor_distances[8]
-
+    
+        # Assign sensor distances
+        L2, L1, FL, FFL, F, FFR, FR, R1, R2 = self.sensor_distances
+    
         forward_threshold = 80
         panic_threshold = 30
-
+    
+        # Speed control
         if F > forward_threshold:
             self.speed = min(self.speed + self.acceleration, self.max_speed)
         else:
-            self.speed *= 0.85
-
-        left_total = L1 + L2 + FL
-        right_total = R1 + R2 + FR
-        steer = (right_total - left_total) / 300.0
+            self.speed *= 0.85  # Slow down if front is blocked
+    
+        # Steering decision
+        left_total = L2 + L1 + FL + FFL
+        right_total = FR + R1 + R2 + FFR
+        steer = (right_total - left_total) / 400.0  # More rays, so scale up denominator
         self.angle += steer * self.turn_speed
-
+    
+        # Emergency dodge
         if F < panic_threshold:
-            if FL < FR:
+            if FL + FFL < FR + FFR:
                 self.angle += self.turn_speed
             else:
                 self.angle -= self.turn_speed
-
+    
+        # Apply movement
         rad = math.radians(-self.angle)
         dx = self.speed * math.cos(rad)
         dy = self.speed * math.sin(rad)
         self.x += dx
         self.y += dy
+
 
     def check_collision(self, surface):
         try:
